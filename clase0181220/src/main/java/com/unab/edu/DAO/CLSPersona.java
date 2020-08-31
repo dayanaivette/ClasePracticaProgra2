@@ -37,6 +37,7 @@ public class CLSPersona {
               
               Personas.add(persona);
           }
+            conectar.close();
     }catch (Exception e){
         JOptionPane.showMessageDialog(null, e);
     }
@@ -54,6 +55,7 @@ public class CLSPersona {
            Statement.execute();
            JOptionPane.showMessageDialog(null, "Persona guardada");
            
+           conectar.close();
         } catch (SQLException e) {
            JOptionPane.showMessageDialog(null, e);
         }
@@ -69,6 +71,7 @@ public class CLSPersona {
            Statement.execute();
            JOptionPane.showMessageDialog(null, "Persona eliminada");
            
+           conectar.close();
         } catch (SQLException e) {
            JOptionPane.showMessageDialog(null, e);
         }
@@ -85,6 +88,8 @@ public class CLSPersona {
            
            Statement.execute();
            JOptionPane.showMessageDialog(null, "Persona actualizada");
+           
+           conectar.close();
            
         } catch (SQLException e) {
            JOptionPane.showMessageDialog(null, e);
