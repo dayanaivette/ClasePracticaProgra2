@@ -44,7 +44,7 @@ public class CLSProfesor {
                 passdebasededatos = iterador.getPass();
 
             }
-            CallableStatement st2 = conectar.prepareCall("call SP_S_CRIP(?)");
+            CallableStatement st2 = conectar.prepareCall("call SP_S_CRIPPROFESOR(?)");
             st2.setString("PcripPass", Pass);
             ResultSet rs2 = st2.executeQuery();
             while (rs2.next()) {
