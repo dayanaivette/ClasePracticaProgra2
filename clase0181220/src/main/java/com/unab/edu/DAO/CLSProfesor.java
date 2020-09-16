@@ -79,12 +79,13 @@ public class CLSProfesor {
             while (resultadoConsulta.next()) {
                 Profesor profe = new Profesor();
                 profe.setIdProfesor(resultadoConsulta.getInt("idProfesor"));
-                profe.setIdPersonaProfesor(resultadoConsulta.getInt("idPersonaProfesor"));
+                profe.setIdPersonaProfesor(resultadoConsulta.getInt("idPersona"));
                 profe.setNombre(resultadoConsulta.getString("Nombre"));
                 profe.setUsuario(resultadoConsulta.getString("Usuario"));
                 profe.setPass(resultadoConsulta.getString("Pass"));
                 profe.setDUI(resultadoConsulta.getString("DUI"));
                 
+              
                 prof.add(profe);
             }
              conectar.close();
@@ -96,10 +97,10 @@ public class CLSProfesor {
     public void AgregarProfesor(Profesor prof){
         try {
            CallableStatement Statement = conectar.prepareCall("call SP_I_PROFESOR(?,?,?,?)");
-           Statement.setInt("pidPersonaProfesor", prof.getIdPersonaProfesor());
-           Statement.setString("pUsuario", prof.getUsuario());
-           Statement.setString("pPass", prof.getPass());
-           Statement.setString("pDUI", prof.getDUI());
+           Statement.setInt("PidPersonaProfesor", prof.getIdPersonaProfesor());
+           Statement.setString("PUsuario", prof.getUsuario());
+           Statement.setString("PPass", prof.getPass());
+           Statement.setString("PDUI", prof.getDUI());
            
            Statement.execute();
            JOptionPane.showMessageDialog(null, "Profesor guardado");

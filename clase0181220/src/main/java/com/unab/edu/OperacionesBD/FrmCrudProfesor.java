@@ -39,11 +39,10 @@ public class FrmCrudProfesor extends javax.swing.JFrame {
 
         for (var iterarDatosProfesor : MostrarTablaProfesor) {
             filas[0] = String.valueOf(iterarDatosProfesor.getIdProfesor());
-            filas[2] = String.valueOf(iterarDatosProfesor.getIdPersonaProfesor());
-            filas[3] = iterarDatosProfesor.getNombre();
-            filas[4] = iterarDatosProfesor.getUsuario();
-            filas[5] = iterarDatosProfesor.getPass();
-            filas[6] = String.valueOf(iterarDatosProfesor.getDUI());
+            filas[1] = String.valueOf(iterarDatosProfesor.getIdPersonaProfesor());
+            filas[2] = iterarDatosProfesor.getUsuario();
+            filas[3] = iterarDatosProfesor.getPass();
+            filas[4] = String.valueOf(iterarDatosProfesor.getDUI());
             
             ModeloTabla.addRow(filas);
         }
