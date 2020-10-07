@@ -9,6 +9,7 @@ import com.unab.edu.Entidades.Estudiante;
 import com.unab.edu.conexionmysql.ConexionBd;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -24,9 +25,12 @@ public class CLSEstudiante {
         ArrayList<Estudiante> ListarContra = new ArrayList<>();
         try {
             CallableStatement st = conectar.prepareCall("call SP_S_LOGUINESTUDIANTE(?,?)");
-
+//            Date fecha = new Date();
+                    
             st.setString("pusuario", usuario);
             st.setString("ppass", Pass);
+//            st.setDate("", fecha);
+         
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Estudiante es = new Estudiante();
@@ -98,11 +102,11 @@ public class CLSEstudiante {
     public void AgregarEstudiante(Estudiante est){
         try {
            CallableStatement Statement = conectar.prepareCall("call SP_I_ESTUDIANTE(?,?,?,?,?)");
-           Statement.setInt("pMatricula", est.getMatricula());
-           Statement.setInt("pidPersona", est.getIdPersona());
-           Statement.setString("pUsu", est.getUsu());
-           Statement.setString("pPass", est.getPass());
-           Statement.setInt("pNIE", est.getNIE());
+           Statement.setInt("PMatricula", est.getMatricula());
+           Statement.setInt("PidPersona", est.getIdPersona());
+           Statement.setString("PUsuario", est.getUsu());
+           Statement.setString("PPass", est.getPass());
+           Statement.setInt("PNIE", est.getNIE());
            
            
            Statement.execute();

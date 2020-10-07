@@ -9,7 +9,12 @@ import com.unab.edu.DAO.CLSPersona;
 import com.unab.edu.Entidades.Persona;
 import com.unab.edu.conexionmysql.ConexionBd;
 import java.sql.Connection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,25 +31,30 @@ public class crudPersona extends javax.swing.JFrame {
         initComponents();
         mostrarTablaPersona();
     }
+    SimpleDateFormat formato = new SimpleDateFormat("d MMM yy");
     
     void mostrarTablaPersona() {
 
-        String TITULOS[] = {"ID", "NOMBRE", "APELLIDOS", "EDAD", "SEXO"};
+        String TITULOS[] = {"ID", "NOMBRE", "APELLIDOS", "EDAD", "SEXO", "FECHA"};
         DefaultTableModel modeloTabla = new DefaultTableModel(null, TITULOS);
         CLSPersona clasepersona = new CLSPersona();
         ArrayList<Persona> Personas = clasepersona.MostrarPersona();
 
-        String filas[] = new String[5];
+        String filas[] = new String[6];
         for (var iterarDatosPersona : Personas) {
             filas[0] = String.valueOf(iterarDatosPersona.getIdPersona());
             filas[1] = iterarDatosPersona.getNombre();
             filas[2] = iterarDatosPersona.getApellido();
             filas[3] = String.valueOf(iterarDatosPersona.getEdad());
             filas[4] = iterarDatosPersona.getSexo();
-            
+            if (iterarDatosPersona.getFecha()== null){
+            filas[5] = "NO HAY DATOS";
+            } else {
+            filas[5] = String.valueOf(formato.format(iterarDatosPersona.getFecha()));
+            }
             modeloTabla.addRow(filas);
         }
-        jTable1.setModel(modeloTabla);
+        tb_Persona.setModel(modeloTabla);
     }
 
     /**
@@ -59,7 +69,7 @@ public class crudPersona extends javax.swing.JFrame {
         tbMostrar = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tb_Persona = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         txtId = new javax.swing.JTextField();
         txtApellido = new javax.swing.JTextField();
@@ -68,17 +78,19 @@ public class crudPersona extends javax.swing.JFrame {
         txtSexo = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
-        btnActulizar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnConexion = new javax.swing.JButton();
+        txtFecha = new com.toedter.calendar.JDateChooser();
+        jLabel6 = new javax.swing.JLabel();
+        btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tb_Persona.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -89,12 +101,12 @@ public class crudPersona extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        tb_Persona.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTable1MouseClicked(evt);
+                tb_PersonaMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tb_Persona);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -102,14 +114,14 @@ public class crudPersona extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -135,13 +147,6 @@ public class crudPersona extends javax.swing.JFrame {
             }
         });
 
-        btnActulizar.setText("Actulizar Datos ");
-        btnActulizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActulizarActionPerformed(evt);
-            }
-        });
-
         jLabel1.setText("ID");
 
         jLabel2.setText("Nombre");
@@ -152,10 +157,21 @@ public class crudPersona extends javax.swing.JFrame {
 
         jLabel5.setText("Sexo");
 
-        jButton1.setText("Probar conexion");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnConexion.setText("Probar conexion");
+        btnConexion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnConexionActionPerformed(evt);
+            }
+        });
+
+        txtFecha.setDateFormatString("d MMM yy");
+
+        jLabel6.setText("Fecha");
+
+        btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
             }
         });
 
@@ -169,22 +185,12 @@ public class crudPersona extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtId)
-                            .addComponent(txtEdad, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                            .addComponent(txtApellido, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                            .addComponent(txtSexo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                            .addComponent(txtEdad, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtApellido)
+                            .addComponent(txtSexo, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtNombre)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(21, 21, 21)
-                                        .addComponent(btnGuardar)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnEliminar)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnActulizar)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton1)))
+                                .addComponent(jLabel1)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -193,7 +199,27 @@ public class crudPersona extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 490, Short.MAX_VALUE))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(txtFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(62, 62, 62)
+                .addComponent(btnGuardar)
+                .addGap(38, 38, 38)
+                .addComponent(btnEliminar)
+                .addGap(33, 33, 33)
+                .addComponent(btnLimpiar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnConexion)
+                .addGap(47, 47, 47))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,13 +244,21 @@ public class crudPersona extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGuardar)
-                    .addComponent(btnEliminar)
-                    .addComponent(btnActulizar)
-                    .addComponent(jButton1))
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addComponent(jLabel6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(81, 125, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnGuardar)
+                            .addComponent(btnEliminar)
+                            .addComponent(btnConexion)
+                            .addComponent(btnLimpiar))
+                        .addGap(66, 66, 66))))
         );
 
         tbMostrar.addTab("Operaciones CRUD", jPanel1);
@@ -235,12 +269,12 @@ public class crudPersona extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addComponent(tbMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(tbMostrar))
         );
@@ -252,12 +286,12 @@ public class crudPersona extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnConexionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConexionActionPerformed
         // TODO add your handling code here:
         ConexionBd claseConectar = new ConexionBd();
         Connection conectar = claseConectar.retornarConexion();
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnConexionActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         CLSPersona personas = new CLSPersona();
@@ -267,8 +301,15 @@ public class crudPersona extends javax.swing.JFrame {
         Persona.setApellido(txtApellido.getText());
         Persona.setEdad(Integer.parseInt(txtEdad.getText()));
         Persona.setSexo(txtSexo.getText());
+        Persona.setFecha(txtFecha.getDate());
         
-        personas.AgregarPersona(Persona);
+        if(txtId.getText().isEmpty()){
+            personas.AgregarPersona(Persona);
+        }else{
+            Persona.setIdPersona(Integer.parseInt(txtId.getText()));
+            personas.ActualizarPersona(Persona);
+        }
+        btnLimpiar.doClick();
         mostrarTablaPersona();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -282,37 +323,43 @@ public class crudPersona extends javax.swing.JFrame {
         mostrarTablaPersona();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
-    private void btnActulizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActulizarActionPerformed
-        CLSPersona personas = new CLSPersona();
-        Persona Persona = new Persona();
-        
-        Persona.setIdPersona(Integer.parseInt(txtId.getText()));
-        Persona.setNombre(txtNombre.getText());
-        Persona.setApellido(txtApellido.getText());
-        Persona.setEdad(Integer.parseInt(txtEdad.getText()));
-        Persona.setSexo(txtSexo.getText());
-        
-        personas.ActualizarPersona(Persona);
-        mostrarTablaPersona();
-    }//GEN-LAST:event_btnActulizarActionPerformed
-
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void tb_PersonaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_PersonaMouseClicked
         tbMostrar.setSelectedIndex(tbMostrar.indexOfComponent(jPanel1));
-        int fila =jTable1.getSelectedRow();
+        int fila =tb_Persona.getSelectedRow();
         
-        String ID = String.valueOf(jTable1.getValueAt(fila, 0));
-        String Nombre = String.valueOf(jTable1.getValueAt(fila, 1));
-        String Apellido = String.valueOf(jTable1.getValueAt(fila, 2));
-        String Edad = String.valueOf(jTable1.getValueAt(fila, 3));
-        String Sexo = String.valueOf(jTable1.getValueAt(fila, 4));
+        String ID = String.valueOf(tb_Persona.getValueAt(fila, 0));
+        String Nombre = String.valueOf(tb_Persona.getValueAt(fila, 1));
+        String Apellido = String.valueOf(tb_Persona.getValueAt(fila, 2));
+        String Edad = String.valueOf(tb_Persona.getValueAt(fila, 3));
+        String Sexo = String.valueOf(tb_Persona.getValueAt(fila, 4));
+        String Fecha = String.valueOf(tb_Persona.getValueAt(fila, 5));
         
         txtId.setText(ID);
         txtNombre.setText(Nombre);
         txtApellido.setText(Apellido);
         txtEdad.setText(Edad);
         txtSexo.setText(Sexo);
+        
+        Date castfecha = new Date();
+        try {
+            castfecha = formato.parse(Fecha);
+            txtFecha.setDate(castfecha);
+        } catch (ParseException ex) {
+//            Logger.getLogger(crudPersona.class.getName()).log(Level.SEVERE, null, ex);
+            txtFecha.setDate(null);
+        }
+    }//GEN-LAST:event_tb_PersonaMouseClicked
 
-    }//GEN-LAST:event_jTable1MouseClicked
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        
+        txtId.setText(null);
+        txtNombre.setText(null);
+        txtApellido.setText(null);
+        txtEdad.setText(null);
+        txtSexo.setText(null);
+        txtFecha.setDate(null);
+        
+    }//GEN-LAST:event_btnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -350,22 +397,24 @@ public class crudPersona extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnActulizar;
+    private javax.swing.JButton btnConexion;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnLimpiar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTabbedPane tbMostrar;
+    private javax.swing.JTable tb_Persona;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtEdad;
+    private com.toedter.calendar.JDateChooser txtFecha;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtSexo;
